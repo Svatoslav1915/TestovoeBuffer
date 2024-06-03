@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -15,15 +16,27 @@ import (
 	"testovoe/internal/models"
 )
 
-const (
-	method      string = "POST"
-	urlStr      string = "https://development.kpi-drive.ru/_api/facts/save_fact"
-	bearerToken string = "48ab34464a5573519725deb5865cc74c"
+var (
+	// Задаем контекст для бд
+	ctx = context.Background()
+	// Забираем из окружения переменные
+	method      = os.Getenv("METHOD")
+	urlStr      = os.Getenv("URL_STR")
+	bearerToken = os.Getenv("BEARER_TOKEN")
 )
 
-var (
-	ctx = context.Background()
-)
+// Инициализируем переменные стандартными значениями, если они не были переданы в окружение
+func init() {
+	if method == "" {
+		method = "POST"
+	}
+	if urlStr == "" {
+		urlStr = "https://development.kpi-drive.ru/_api/facts/save_fact"
+	}
+	if bearerToken == "" {
+		bearerToken = "48ab34464a5573519725deb5865cc74c"
+	}
+}
 
 // RedisFiller заполняет Redis данными фактов
 func RedisFiller(rdb *redis.Client, factsPerMinute int) {
