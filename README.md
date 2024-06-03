@@ -6,7 +6,7 @@
 
 1. Установите Go
 2. Установите Redis: https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-windows/
-3. Клонируйте проект: git clone https://github.com/Svatoslav191/TestovoeBuffer.git`
+3. Клонируйте проект: git clone https://github.com/Svatoslav191/TestovoeBuffer`
 3. Перейдите в директорию проекта: `cd ваша_директория`
 4. Установите зависимости: `go mod download`
 
