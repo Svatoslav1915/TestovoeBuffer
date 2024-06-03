@@ -31,7 +31,7 @@ func RedisFiller(rdb *redis.Client, factsPerMinute int) {
 		for i := 0; i < factsPerMinute; i++ {
 			// Задержка для постепенной отправки запросов
 			time.Sleep(time.Duration(time.Minute.Milliseconds() / int64(factsPerMinute)))
-
+			// Заполняем структуру факта любыми данными(просто для примера)
 			fact := models.Fact{
 				PeriodStart:         "2024-05-01",
 				PeriodEnd:           "2024-05-31",
@@ -45,6 +45,7 @@ func RedisFiller(rdb *redis.Client, factsPerMinute int) {
 				Comment:             "buffer Last_name",
 			}
 
+			// Конвертируем структуру в байты
 			data, err := json.Marshal(fact)
 			if err != nil {
 				log.Printf("Ошибка при переводе факта в байты: %v", err)
@@ -65,6 +66,7 @@ func FetchFromRedis(rdb *redis.Client, facts chan models.Fact) {
 		// Извлечение данных из Redis и тут же удаление записи из базы
 		data, err := rdb.LPop(ctx, "facts_queue").Bytes()
 		if err != nil {
+			// Опциональное ожидание данных из Redis
 			if err == redis.Nil {
 				// Если данных нет, подождать и попробовать снова
 				time.Sleep(1 * time.Second)
@@ -104,6 +106,7 @@ func SendFactsToAPI(facts chan models.Fact, counter *int) {
 
 // sendFact отправляет данные факта на API сервер
 func sendFact(fact models.Fact) error {
+	// Собираем тело запроса
 	data := url.Values{}
 	data.Set("period_start", fact.PeriodStart)
 	data.Set("period_end", fact.PeriodEnd)
@@ -115,15 +118,15 @@ func sendFact(fact models.Fact) error {
 	data.Set("is_plan", fmt.Sprintf("%d", fact.IsPlan))
 	data.Set("auth_user_id", fmt.Sprintf("%d", fact.AuthUserId))
 	data.Set("comment", fact.Comment)
-
+	// Собираем запрос
 	req, err := http.NewRequest(method, urlStr, bytes.NewBufferString(data.Encode()))
 	if err != nil {
 		return fmt.Errorf("ошибка при создании запроса: %w", err)
 	}
-
+	// Добавляем заголовки
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", bearerToken))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
+	// Устанавливаем соединение с сервером ( по-хорошему его нужно держать пока не закончится буфер)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -131,6 +134,7 @@ func sendFact(fact models.Fact) error {
 	} else {
 		fmt.Printf("Сервер вернул код ответа: %d", resp.StatusCode)
 	}
+	// После обработки ошибок указываем на закрытие тела запроса по окончании использования функции
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
