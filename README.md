@@ -13,7 +13,7 @@
 ## По желанию
 Установите переменные окружения и тут же вызовите приложение, иначе запустится с дефолтными( такими же)
 
-METHOD="POST",URL_STR="https://development.kpi-drive.ru/_api/facts/save_fact",BEARER_TOKEN="48ab34464a5573519725deb5865cc74c" ./main.exe
+METHOD="POST",URL_STR="https://development.kpi-drive.ru/_api/facts/save_fact",BEARER_TOKEN="48ab34464a5573519725deb5865cc74c" ./main.exe -ip (IP) -port (PORT)
 
 ## Использование
 1. На машине с установленным Redis:
