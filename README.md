@@ -26,7 +26,7 @@ METHOD="POST",URL_STR="https://development.kpi-drive.ru/_api/facts/save_fact",BE
 	Из-под Go
 1) go run cmd/main.go -ip 192.168.31.6 -port 6379
    ИЛИ
-3) 2) go run cmd/main.go (измените стандартные значения на 24 и 25 строчках internal/app/app.go на ваши адрес и порт
+2) go run cmd/main.go (измените стандартные значения на 24 и 25 строчках internal/app/app.go на ваши адрес и порт
 	exe:
 1) main.exe -ip (YOUR_IP) -port (YOUR_PORT)
    ИЛИ
